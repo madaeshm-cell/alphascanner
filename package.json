@@ -1,0 +1,16 @@
+{
+  "name": "groww-alpha-scanner",
+  "version": "1.0.0",
+  "description": "AI-powered Indian stock scanner for Groww investors",
+  "private": true,
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "devDependencies": {
+    "vercel": "^32.0.0"
+  }
+}
