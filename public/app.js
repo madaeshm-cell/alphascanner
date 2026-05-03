@@ -518,7 +518,7 @@ async function fetchAICommentary(picks) {
     if(el) el.textContent=data.text||"Analysis unavailable.";
     if(te) te.textContent=new Date().toLocaleTimeString("en-IN");
   } catch(e) {
-    if(el) el.textContent="AI commentary unavailable — check that ANTHROPIC_API_KEY is set in Vercel Environment Variables (Settings → Environment Variables → Add → Redeploy).";
+    const localText = generateLocalCommentary(Object.values(stockState).sort((a,b)=>b.score-a.score).slice(0,10)); if(el) el.textContent = "⚡ Local Analysis: " + localText;
     if(te) te.textContent=new Date().toLocaleTimeString("en-IN");
     console.error("AI error:", e.message);
   }
@@ -534,7 +534,7 @@ async function fetchStockAI(st) {
     if(data.error) throw new Error(data.error);
     if(el) el.textContent=data.text||"Analysis unavailable.";
   } catch(e) {
-    if(el) el.textContent=`Analysis for ${st.symbol} unavailable — ensure ANTHROPIC_API_KEY is configured in Vercel Environment Variables.`;
+    if(el) el.textContent = "⚡ " + generateLocalStockAnalysis(st);
     console.error("Stock AI error:", e.message);
   }
 }
@@ -582,3 +582,35 @@ runScan(false);
 startIntervals();
 // Slow tick between real fetches
 setInterval(()=>{simulateTick();renderTicker();},3000);
+
+/* ===== SMART FALLBACK COMMENTARY ===== */
+function generateLocalCommentary(picks) {
+  const top3 = picks.slice(0, 3);
+  const bulls = picks.filter(p => p.chgPct > 0).length;
+  const sentiment = bulls >= 7 ? "bullish" : bulls >= 5 ? "mixed" : "cautious";
+  const sectors = [...new Set(top3.map(p => p.sector))].join(", ");
+  const bestPick = top3[0];
+  const oversold = picks.filter(p => p.rsi < 35);
+
+  return `Market sentiment is ${sentiment} with ${bulls}/10 picks showing positive momentum. ` +
+    `Top opportunity: ${bestPick.symbol} (${bestPick.sector}) at ${fmtPrice(bestPick.price)} with RSI ${bestPick.rsi.toFixed(0)}${bestPick.rsi < 40 ? " — showing oversold conditions, potential reversal ahead" : " — steady momentum building"}. ` +
+    `${oversold.length > 0 ? `${oversold.length} stock${oversold.length>1?"s":""} (${oversold.map(p=>p.symbol).join(", ")}) are in oversold territory — watch for bounce opportunities. ` : ""}` +
+    `Key sectors today: ${sectors}. Prices updated from NSE/BSE live data.`;
+}
+
+function generateLocalStockAnalysis(st) {
+  const signal = getSignal(st.chgPct, st.rsi);
+  const rsiText = st.rsi < 30 ? "heavily oversold — strong mean-reversion opportunity" :
+    st.rsi < 45 ? "mildly oversold — potential accumulation zone" :
+    st.rsi > 70 ? "overbought — wait for pullback before entering" :
+    "neutral — no extreme readings";
+  const peText = st.pe === "N/A" ? "P/E not available (loss-making)" : `P/E of ${st.pe}`;
+  const from52H = ((st.price - st.high52) / st.high52 * 100).toFixed(1);
+  const from52L = ((st.price - st.low52) / st.low52 * 100).toFixed(1);
+
+  return `${st.symbol} (${st.name}) is currently trading at ${fmtPrice(st.price)}, ${st.chgPct >= 0 ? "up" : "down"} ${Math.abs(st.chgPct).toFixed(2)}% today. ` +
+    `RSI at ${st.rsi.toFixed(0)} is ${rsiText}. ` +
+    `The stock is ${Math.abs(parseFloat(from52H))}% below its 52-week high of ${fmtPrice(st.high52)} and ${parseFloat(from52L) > 0 ? "+" : ""}${from52L}% from its 52-week low of ${fmtPrice(st.low52)}. ` +
+    `With a ${peText} and ${st.divYield !== "0%" ? `dividend yield of ${st.divYield}` : "no dividend"}, ` +
+    `this stock ${signal === "buy" ? "appears well-positioned for entry — consider a staggered buy approach via SIP on Groww" : signal === "sell" ? "looks overbought — better to wait for a 5–10% correction before entering" : "is in a wait-and-watch zone — set a price alert on Groww and enter on dips"}.`;
+}
