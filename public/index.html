@@ -14,15 +14,14 @@
 <body>
 <header class="header">
   <div class="header-left">
-    <div class="logo-mark">
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><polyline points="1,13 5,7 9,10 17,3" stroke="white" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><polyline points="13,3 17,3 17,7" stroke="white" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </div>
+    <div class="logo-mark"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><polyline points="1,13 5,7 9,10 17,3" stroke="white" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><polyline points="13,3 17,3 17,7" stroke="white" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     <div>
       <div class="app-name">Alpha Scanner</div>
-      <div class="app-sub" id="price-source">Loading live prices...</div>
+      <div class="app-sub">for Groww investors · NSE/BSE</div>
     </div>
   </div>
   <div class="header-right">
+    <span id="price-badge" class="price-badge">LOADING...</span>
     <div class="live-badge"><span class="live-dot"></span>LIVE</div>
     <button class="icon-btn" onclick="triggerRefresh()" id="refresh-btn">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
@@ -59,7 +58,7 @@
     <div class="ai-card">
       <div class="ai-card-header">
         <div class="ai-chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>AI INSIGHT</div>
-        <span class="ai-time" id="ai-time">--</span>
+        <span class="ai-time" id="ai-time">Generating...</span>
       </div>
       <p class="ai-text" id="ai-commentary">Initialising Claude AI market analysis...</p>
     </div>
@@ -71,39 +70,27 @@
       <span class="sub-label">Tap for full details</span>
     </div>
     <div class="picks-list" id="picks-list">
-      <div class="loading-state"><div class="spinner"></div><p>Fetching live NSE/BSE prices...</p></div>
+      <div class="loading-state"><div class="spinner"></div><p>Fetching live prices...</p></div>
     </div>
   </section>
-
-  <div class="disclaimer">⚠ Educational only. Not SEBI-registered advice. Always verify prices on NSE/BSE before investing.</div>
+  <div class="disclaimer">⚠ Educational only. Not SEBI-registered advice. Always verify on NSE/BSE before investing.</div>
 </main>
 
 <nav class="bottom-nav">
-  <button class="nav-item active" onclick="scrollTo(0,0)">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>Dashboard</span>
-  </button>
-  <button class="nav-item" onclick="document.querySelector('.picks-list').scrollIntoView({behavior:'smooth'})">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Picks</span>
-  </button>
-  <button class="nav-item" onclick="triggerRefresh()">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg><span>Refresh</span>
-  </button>
-  <button class="nav-item" onclick="document.querySelector('.ai-card').scrollIntoView({behavior:'smooth'})">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><span>AI</span>
-  </button>
+  <button class="nav-item active" onclick="scrollTo(0,0)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>Dashboard</span></button>
+  <button class="nav-item" onclick="document.querySelector('.picks-list').scrollIntoView({behavior:'smooth'})"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Picks</span></button>
+  <button class="nav-item" onclick="triggerRefresh()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg><span>Refresh</span></button>
+  <button class="nav-item" onclick="document.querySelector('.ai-card').scrollIntoView({behavior:'smooth'})"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><span>AI View</span></button>
 </nav>
 
-<!-- ===== MODAL ===== -->
+<!-- MODAL -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModal()"></div>
 <div class="modal" id="stock-modal">
   <div class="modal-header">
-    <button class="modal-back" onclick="closeModal()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
+    <button class="modal-back" onclick="closeModal()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="modal-title-block">
       <div class="modal-sym" id="modal-sym">--</div>
       <div class="modal-name" id="modal-name">--</div>
-      <div class="modal-source" id="modal-source"></div>
     </div>
     <div class="modal-price-block">
       <div class="modal-price" id="modal-price">--</div>
@@ -127,14 +114,15 @@
     <!-- KEY STATS -->
     <div class="modal-section-title">Key Statistics</div>
     <div class="stats-grid">
-      <div class="stat-box"><div class="stat-box-lbl">Current Price</div><div class="stat-box-val" id="s-price">--</div></div>
+      <div class="stat-box"><div class="stat-box-lbl">Price</div><div class="stat-box-val" id="s-price">--</div></div>
       <div class="stat-box"><div class="stat-box-lbl">Day Change</div><div class="stat-box-val" id="s-chg">--</div></div>
       <div class="stat-box"><div class="stat-box-lbl">Open</div><div class="stat-box-val" id="s-open">--</div></div>
+      <div class="stat-box"><div class="stat-box-lbl">Prev Close</div><div class="stat-box-val" id="s-prev">--</div></div>
       <div class="stat-box"><div class="stat-box-lbl">Day High</div><div class="stat-box-val" id="s-high">--</div></div>
       <div class="stat-box"><div class="stat-box-lbl">Day Low</div><div class="stat-box-val" id="s-low">--</div></div>
       <div class="stat-box"><div class="stat-box-lbl">52W High</div><div class="stat-box-val" id="s-high52">--</div></div>
       <div class="stat-box"><div class="stat-box-lbl">52W Low</div><div class="stat-box-val" id="s-low52">--</div></div>
-      <div class="stat-box"><div class="stat-box-lbl">Market Cap</div><div class="stat-box-val" id="s-mcap">--</div></div>
+      <div class="stat-box"><div class="stat-box-lbl">Mkt Cap</div><div class="stat-box-val" id="s-mcap">--</div></div>
       <div class="stat-box"><div class="stat-box-lbl">Volume</div><div class="stat-box-val" id="s-vol">--</div></div>
       <div class="stat-box"><div class="stat-box-lbl">P/E Ratio</div><div class="stat-box-val" id="s-pe">--</div></div>
       <div class="stat-box"><div class="stat-box-lbl">EPS (₹)</div><div class="stat-box-val" id="s-eps">--</div></div>
@@ -150,54 +138,52 @@
       <div class="tech-row"><span class="tech-lbl">MACD</span><span class="tech-val" id="t-macd">--</span><span class="tech-sig" id="t-macd-s">--</span></div>
       <div class="tech-row"><span class="tech-lbl">SMA (20)</span><span class="tech-val" id="t-sma20">--</span><span class="tech-sig" id="t-sma20-s">--</span></div>
       <div class="tech-row"><span class="tech-lbl">SMA (50)</span><span class="tech-val" id="t-sma50">--</span><span class="tech-sig" id="t-sma50-s">--</span></div>
-      <div class="tech-row"><span class="tech-lbl">Bollinger Band</span><span class="tech-val" id="t-boll">--</span><span class="tech-sig" id="t-boll-s">--</span></div>
       <div class="tech-row"><span class="tech-lbl">Stochastic %K</span><span class="tech-val" id="t-stoch">--</span><span class="tech-sig" id="t-stoch-s">--</span></div>
       <div class="tech-row"><span class="tech-lbl">ADX</span><span class="tech-val" id="t-adx">--</span><span class="tech-sig" id="t-adx-s">--</span></div>
+      <div class="tech-row"><span class="tech-lbl">Williams %R</span><span class="tech-val" id="t-willr">--</span><span class="tech-sig" id="t-willr-s">--</span></div>
     </div>
 
-    <!-- ===== INVESTMENT CALCULATOR ===== -->
+    <!-- INVESTMENT CALCULATOR -->
     <div class="modal-section-title">Investment Calculator</div>
     <div class="calc-card">
-
       <!-- MODE TOGGLE -->
-      <div class="mode-toggle">
-        <button class="mode-tab active" onclick="setCalcMode('lumpsum',this)">Lump Sum</button>
-        <button class="mode-tab" onclick="setCalcMode('sip',this)">SIP (Monthly)</button>
+      <div class="mode-tabs">
+        <button class="mode-tab active" onclick="document.querySelectorAll('.mode-tab').forEach((b,i)=>b.classList.toggle('active',i===0));toggleCalcMode('lumpsum')">💰 Lump Sum</button>
+        <button class="mode-tab" onclick="document.querySelectorAll('.mode-tab').forEach((b,i)=>b.classList.toggle('active',i===1));toggleCalcMode('sip')">📅 SIP</button>
       </div>
 
-      <!-- AMOUNT -->
-      <div class="calc-row">
-        <label class="calc-lbl" id="amt-label">Lump sum amount</label>
-        <div class="calc-input-wrap">
-          <span class="calc-prefix">₹</span>
-          <input type="number" class="calc-input" id="calc-amount" value="1000" min="1" oninput="calcReturns()"/>
-        </div>
+      <div id="lumpsum-lbl" class="calc-sub-lbl">One-time investment amount</div>
+      <div id="sip-lbl" class="calc-sub-lbl" style="display:none">Amount per SIP instalment</div>
+
+      <div class="calc-input-wrap">
+        <span class="calc-prefix">₹</span>
+        <input type="number" class="calc-input" id="calc-amount" value="1000" min="1" oninput="calcReturns()"/>
       </div>
       <div class="calc-quick-btns">
         <button class="qbtn" onclick="setCalcAmount(500)">₹500</button>
         <button class="qbtn" onclick="setCalcAmount(1000)">₹1K</button>
         <button class="qbtn" onclick="setCalcAmount(5000)">₹5K</button>
         <button class="qbtn" onclick="setCalcAmount(10000)">₹10K</button>
-        <button class="qbtn" onclick="setCalcAmount(50000)">₹50K</button>
+        <button class="qbtn" onclick="setCalcAmount(25000)">₹25K</button>
         <button class="qbtn" onclick="setCalcAmount(100000)">₹1L</button>
       </div>
 
-      <!-- SIP EXTRA ROW -->
-      <div id="sip-row" style="display:none;margin-top:10px">
-        <div class="sip-info-card">
-          <div class="sip-info-row"><span>SIP = Fixed amount invested every month</span></div>
-          <div class="sip-info-row"><span>Rupee cost averaging reduces risk over time</span></div>
-        </div>
+      <div id="sip-freq-row" style="display:none;margin-top:12px">
+        <label class="calc-lbl">SIP Frequency</label>
+        <select id="sip-freq" class="calc-select" onchange="calcReturns()">
+          <option value="monthly">Monthly</option>
+          <option value="quarterly">Quarterly</option>
+          <option value="weekly">Weekly</option>
+          <option value="yearly">Yearly</option>
+        </select>
       </div>
 
-      <!-- RATE -->
       <div class="calc-row" style="margin-top:14px">
-        <label class="calc-lbl">Expected annual return: <span id="rate-display" style="color:#00b386;font-weight:700">15%</span></label>
-        <input type="range" id="calc-rate" min="5" max="150" value="15" oninput="calcReturns();document.getElementById('rate-display').textContent=this.value+'%'" style="width:100%;margin-top:8px;accent-color:#00b386"/>
-        <div class="rate-labels"><span>5%</span><span>Conservative 12%</span><span>Aggressive 30%+</span></div>
+        <label class="calc-lbl">Expected annual return: <span id="rate-display" style="color:#00b386;font-weight:700">20%</span></label>
+        <input type="range" id="calc-rate" min="5" max="150" value="20" oninput="calcReturns();document.getElementById('rate-display').textContent=this.value+'%'" style="width:100%;margin-top:6px;accent-color:#00b386"/>
+        <div class="rate-marks"><span>5%</span><span>25%</span><span>50%</span><span>100%</span><span>150%</span></div>
       </div>
 
-      <!-- HORIZON -->
       <div class="calc-row">
         <label class="calc-lbl">Time horizon</label>
         <div class="calc-tabs">
@@ -209,34 +195,31 @@
         </div>
       </div>
 
-      <!-- RESULTS GRID -->
+      <!-- RESULTS -->
       <div class="calc-results">
+        <div class="calc-result-item"><div class="calc-result-lbl">Shares / SIP</div><div class="calc-result-val" id="cr-shares">--</div></div>
         <div class="calc-result-item"><div class="calc-result-lbl">Total Invested</div><div class="calc-result-val" id="cr-invested">--</div></div>
-        <div class="calc-result-item"><div class="calc-result-lbl">Shares Bought</div><div class="calc-result-val" id="cr-shares">--</div></div>
         <div class="calc-result-item highlight"><div class="calc-result-lbl">Expected Value</div><div class="calc-result-val green" id="cr-total">--</div></div>
         <div class="calc-result-item highlight"><div class="calc-result-lbl">Total Profit</div><div class="calc-result-val green" id="cr-profit">--</div></div>
         <div class="calc-result-item"><div class="calc-result-lbl">Return %</div><div class="calc-result-val green" id="cr-return">--</div></div>
-        <div class="calc-result-item"><div class="calc-result-lbl">CAGR</div><div class="calc-result-val green" id="cr-cagr">--</div></div>
-        <div class="calc-result-item" style="grid-column:1/-1"><div class="calc-result-lbl">Target Share Price</div><div class="calc-result-val green" id="cr-target">--</div></div>
+        <div class="calc-result-item"><div class="calc-result-lbl">CAGR</div><div class="calc-result-val" id="cr-cagr">--</div></div>
       </div>
 
-      <!-- PROJECTION CHART -->
       <div class="calc-chart-wrap"><canvas id="return-chart"></canvas></div>
     </div>
 
     <!-- AI ANALYSIS -->
     <div class="modal-section-title">AI Stock Analysis</div>
     <div class="ai-stock-card">
-      <div class="ai-chip" style="margin-bottom:10px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Claude AI · Deep Analysis</div>
+      <div class="ai-chip" style="margin-bottom:10px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Claude AI</div>
       <p class="ai-text" id="stock-ai-text">Loading analysis...</p>
     </div>
 
     <!-- PEERS -->
     <div class="modal-section-title">Sector Peers</div>
     <div class="peers-list" id="peers-list"></div>
-
-  </div><!-- end modal-body -->
-</div><!-- end modal -->
+  </div>
+</div>
 
 <script src="app.js"></script>
 </body>
