@@ -8,31 +8,32 @@ export default async function handler(req, res) {
   const { prompt } = req.body;
   if (!prompt) return res.status(400).json({ error: "Prompt required" });
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: "ANTHROPIC_API_KEY not configured in Vercel environment variables" });
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return res.status(500).json({ error: "GEMINI_API_KEY not configured" });
 
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01"
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 400,
-        messages: [{ role: "user", content: prompt }]
-      })
-    });
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { maxOutputTokens: 400, temperature: 0.7 }
+        })
+      }
+    );
+
     if (!response.ok) {
       const err = await response.text();
-      console.error("Anthropic API error:", err);
+      console.error("Gemini API error:", err);
       return res.status(502).json({ error: "AI service error", detail: err });
     }
+
     const data = await response.json();
-    const text = data.content?.find(b => b.type === "text")?.text || "";
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
     return res.status(200).json({ text });
+
   } catch (e) {
     console.error("Handler error:", e);
     return res.status(500).json({ error: e.message });
