@@ -245,7 +245,7 @@ function renderPicks(picks) {
 }
 
 /* ===== MODAL ===== */
-function openStockModal(symbol) {
+function openStockModal(symbol) { window.location.href = "/stock.html?s=" + symbol; } function openStockModal_UNUSED(symbol) {
   currentStock = stockState[symbol];
   if (!currentStock) return;
   const st = currentStock;
