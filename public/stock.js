@@ -364,3 +364,113 @@ async function fetchAIAnalysis() {
 function setText(id,val){ const e=document.getElementById(id); if(e) e.textContent=val; }
 
 init();
+
+/* ===== ALERT FUNCTIONS ===== */
+function updateAlertPreview() {
+  if (!st) return;
+  const buy    = parseFloat(document.getElementById("alert-buy")?.value) || 0;
+  const target = parseFloat(document.getElementById("alert-target")?.value) || 0;
+  const stop   = parseFloat(document.getElementById("alert-stop")?.value) || 0;
+  const qty    = parseFloat(document.getElementById("alert-qty")?.value) || 0;
+  const el     = document.getElementById("alert-preview");
+  if (!el) return;
+
+  if (!buy || !target || !qty) {
+    el.innerHTML = "Enter your buy price, target, and quantity to see your expected P&amp;L";
+    return;
+  }
+
+  const invested   = buy * qty;
+  const targetVal  = target * qty;
+  const profit     = targetVal - invested;
+  const profitPct  = (profit / invested) * 100;
+  const currentVal = st.price * qty;
+  const currentPnL = currentVal - invested;
+  const currentPct = (currentPnL / invested) * 100;
+  const stopVal    = stop > 0 ? stop * qty : null;
+  const maxLoss    = stopVal ? stopVal - invested : null;
+
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+      <div><strong>Invested:</strong> ₹${invested.toFixed(2)}</div>
+      <div><strong>Current P&amp;L:</strong> <span style="color:${currentPnL>=0?"#00b386":"#e74c3c"}">${currentPnL>=0?"+":""}₹${currentPnL.toFixed(2)} (${currentPct>=0?"+":""}${currentPct.toFixed(1)}%)</span></div>
+      <div><strong>🎯 Target value:</strong> ₹${targetVal.toFixed(2)}</div>
+      <div><strong>Expected profit:</strong> <span style="color:#00b386">+₹${profit.toFixed(2)} (+${profitPct.toFixed(1)}%)</span></div>
+      ${maxLoss !== null ? `<div><strong>🛑 Max loss:</strong> <span style="color:#e74c3c">₹${Math.abs(maxLoss).toFixed(2)}</span></div>` : ""}
+      <div><strong>Current price:</strong> ₹${st.price.toFixed(2)}</div>
+    </div>
+    <div style="font-size:11px;color:#6b7280">📧 You'll get an email at <strong>madaeshm@gmail.com</strong> when ${st.symbol} reaches ₹${target.toFixed(2)}</div>
+  `;
+}
+
+function submitAlert() {
+  if (!st) return;
+  const buy    = parseFloat(document.getElementById("alert-buy")?.value);
+  const target = parseFloat(document.getElementById("alert-target")?.value);
+  const stop   = parseFloat(document.getElementById("alert-stop")?.value) || 0;
+  const qty    = parseFloat(document.getElementById("alert-qty")?.value);
+
+  if (!buy || buy <= 0)    { showToast("Enter your buy price", "error"); return; }
+  if (!target || target <= 0) { showToast("Enter a target price", "error"); return; }
+  if (!qty || qty <= 0)    { showToast("Enter quantity", "error"); return; }
+  if (target <= buy)       { showToast("Target must be higher than buy price!", "error"); return; }
+  if (stop > 0 && stop >= buy) { showToast("Stop loss must be lower than buy price", "error"); return; }
+
+  addAlert(st.symbol, st.name, buy, target, stop, qty);
+  showToast(`🔔 Alert set! Email when ${st.symbol} hits ₹${target.toFixed(2)}`, "success");
+  renderMyAlerts();
+
+  // Clear form
+  ["alert-buy","alert-target","alert-stop","alert-qty"].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = "";
+  });
+  updateAlertPreview();
+}
+
+function renderMyAlerts() {
+  const alerts = loadAlerts().filter(a => a.symbol === st?.symbol);
+  const section = document.getElementById("my-alerts-section");
+  const list = document.getElementById("my-alerts-list");
+  if (!section || !list) return;
+
+  if (alerts.length === 0) { section.style.display = "none"; return; }
+  section.style.display = "block";
+
+  list.innerHTML = alerts.map(a => {
+    const invested = a.buyPrice * a.quantity;
+    const currentVal = (st?.price || a.buyPrice) * a.quantity;
+    const pnl = currentVal - invested;
+    const pnlPct = (pnl / invested) * 100;
+    const pnlColor = pnl >= 0 ? "#00b386" : "#e74c3c";
+    return `<div class="my-alert-card ${a.status}">
+      <button class="my-alert-del" onclick="deleteAlert(${a.id})" title="Remove alert">✕</button>
+      <div class="my-alert-sym">${a.symbol} <span class="alert-status-pill status-${a.status}">${a.status.toUpperCase()}</span></div>
+      <div class="my-alert-meta">Buy: ₹${a.buyPrice.toFixed(2)} · Qty: ${a.quantity} shares · Set ${new Date(a.createdAt).toLocaleDateString("en-IN")}</div>
+      <div class="my-alert-stats">
+        <div class="my-alert-stat"><div class="my-alert-stat-lbl">Current P&L</div><div class="my-alert-stat-val" style="color:${pnlColor}">${pnl>=0?"+":""}₹${Math.abs(pnl).toFixed(2)}</div></div>
+        <div class="my-alert-stat"><div class="my-alert-stat-lbl">🎯 Target</div><div class="my-alert-stat-val" style="color:#00b386">₹${a.targetPrice.toFixed(2)}</div></div>
+        <div class="my-alert-stat"><div class="my-alert-stat-lbl">🛑 Stop</div><div class="my-alert-stat-val" style="color:#e74c3c">${a.stopLoss>0?"₹"+a.stopLoss.toFixed(2):"None"}</div></div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function deleteAlert(id) {
+  removeAlert(id);
+  renderMyAlerts();
+  showToast("Alert removed", "info");
+}
+
+// Check alerts every 60s when price updates
+let alertCheckInterval = setInterval(async () => {
+  if (!st) return;
+  const fakeState = { [st.symbol]: st };
+  await checkAlerts(fakeState);
+  renderMyAlerts();
+}, 60000);
+
+// Also check immediately on load after price fetched
+window._origFetchRealPrice = fetchRealPrice;
+
+// Render alerts on init
+setTimeout(() => { if (st) { renderMyAlerts(); updateAlertPreview(); } }, 1000);

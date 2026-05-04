@@ -268,6 +268,53 @@
       </div>
     </div>
 
+
+    <!-- PRICE ALERT -->
+    <div class="section-card alert-card">
+      <div class="section-card-title">🔔 Set Price Alert — Email to madaeshm@gmail.com</div>
+      <div class="alert-inner">
+        <div class="alert-preview" id="alert-preview">
+          Enter your buy price and target to see your expected P&amp;L
+        </div>
+        <div class="alert-form-row">
+          <label>My Buy Price (what I paid per share)</label>
+          <div class="alert-input-prefix">
+            <input type="number" class="alert-input" id="alert-buy" placeholder="e.g. 10.00" step="0.01" oninput="updateAlertPreview()"/>
+          </div>
+        </div>
+        <div class="alert-grid">
+          <div class="alert-form-row" style="margin-bottom:0">
+            <label>🎯 Target Price (sell signal)</label>
+            <div class="alert-input-prefix">
+              <input type="number" class="alert-input" id="alert-target" placeholder="e.g. 15.00" step="0.01" oninput="updateAlertPreview()"/>
+            </div>
+          </div>
+          <div class="alert-form-row" style="margin-bottom:0">
+            <label>🛑 Stop Loss (optional)</label>
+            <div class="alert-input-prefix">
+              <input type="number" class="alert-input" id="alert-stop" placeholder="e.g. 8.50" step="0.01" oninput="updateAlertPreview()"/>
+            </div>
+          </div>
+        </div>
+        <div class="alert-form-row">
+          <label>Quantity (number of shares)</label>
+          <input type="number" class="alert-input" id="alert-qty" placeholder="e.g. 100" min="1" oninput="updateAlertPreview()"/>
+        </div>
+        <button class="alert-submit-btn" onclick="submitAlert()">
+          🔔 Set Alert — Email me when to sell
+        </button>
+        <div class="email-note">📧 Alert will be sent to <strong>madaeshm@gmail.com</strong> · Checks every 60 seconds</div>
+      </div>
+    </div>
+
+    <!-- MY ACTIVE ALERTS -->
+    <div class="section-card" id="my-alerts-section" style="display:none">
+      <div class="section-card-title">My Active Alerts</div>
+      <div class="alert-inner">
+        <div class="my-alerts-list" id="my-alerts-list"></div>
+      </div>
+    </div>
+
     <!-- SECTOR PEERS -->
     <div class="section-card">
       <div class="section-card-title">Sector Peers</div>
@@ -276,6 +323,43 @@
 
   </div>
 </div>
+<script src="alerts.js"></script>
 <script src="stock.js"></script>
 </body>
 </html>
+<style>
+/* ALERT SYSTEM STYLES */
+.alert-card { background: var(--surface); border-radius: var(--radius-md); border: 1px solid var(--border); overflow: hidden; }
+.alert-inner { padding: 16px; }
+.alert-form-row { margin-bottom: 14px; }
+.alert-form-row label { font-size: 12px; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 6px; }
+.alert-input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border-md); border-radius: 10px; font-size: 15px; font-weight: 600; font-family: var(--mono); color: var(--text-primary); background: var(--bg); outline: none; transition: border-color .2s; }
+.alert-input:focus { border-color: var(--green); background: #fff; }
+.alert-input-prefix { position: relative; }
+.alert-input-prefix::before { content: "₹"; position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 15px; font-weight: 700; color: var(--green-dark); }
+.alert-input-prefix .alert-input { padding-left: 28px; }
+.alert-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.alert-submit-btn { width: 100%; padding: 14px; background: var(--green); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: var(--font); transition: background .15s, transform .1s; }
+.alert-submit-btn:hover { background: var(--green-dark); }
+.alert-submit-btn:active { transform: scale(0.98); }
+.alert-preview { background: var(--bg); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; border: 1px solid var(--border); font-size: 12px; color: var(--text-secondary); line-height: 1.7; }
+.alert-preview strong { color: var(--text-primary); }
+
+/* MY ALERTS */
+.my-alerts-list { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+.my-alert-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; position: relative; }
+.my-alert-card.active { border-left: 3px solid var(--green); }
+.my-alert-card.triggered { border-left: 3px solid var(--amber); opacity: 0.7; }
+.my-alert-sym { font-family: var(--mono); font-size: 15px; font-weight: 700; }
+.my-alert-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.my-alert-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-top: 10px; }
+.my-alert-stat { background: var(--bg); border-radius: 8px; padding: 8px 10px; }
+.my-alert-stat-lbl { font-size: 9px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); font-weight: 600; margin-bottom: 3px; }
+.my-alert-stat-val { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--text-primary); }
+.my-alert-del { position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; border: 1px solid var(--border-md); border-radius: 7px; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 14px; }
+.my-alert-del:hover { background: var(--red-light); color: var(--red); border-color: var(--red); }
+.alert-status-pill { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 20px; margin-left: 6px; }
+.status-active { background: var(--green-light); color: var(--green-dark); }
+.status-triggered { background: var(--amber-light); color: #92400e; }
+.email-note { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 10px; }
+</style>
