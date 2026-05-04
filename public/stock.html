@@ -173,6 +173,8 @@
     <!-- KEY STATS -->
     <div class="section-card">
       <div class="section-card-title">Key Statistics</div>
+      <!-- PRICE TAB -->
+      <div class="stat-group-title">📈 Price Data</div>
       <div class="stats-grid-2">
         <div class="stat-row"><span class="stat-row-lbl">Current Price</span><span class="stat-row-val" id="s-price">--</span></div>
         <div class="stat-row"><span class="stat-row-lbl">Day Change</span><span class="stat-row-val" id="s-chg">--</span></div>
@@ -182,14 +184,35 @@
         <div class="stat-row"><span class="stat-row-lbl">Day Low</span><span class="stat-row-val" id="s-low">--</span></div>
         <div class="stat-row"><span class="stat-row-lbl">52W High</span><span class="stat-row-val" id="s-high52">--</span></div>
         <div class="stat-row"><span class="stat-row-lbl">52W Low</span><span class="stat-row-val" id="s-low52">--</span></div>
+      </div>
+
+      <!-- FUNDAMENTALS -->
+      <div class="stat-group-title">🏦 Fundamentals</div>
+      <div class="stats-grid-2">
         <div class="stat-row"><span class="stat-row-lbl">Market Cap</span><span class="stat-row-val" id="s-mcap">--</span></div>
         <div class="stat-row"><span class="stat-row-lbl">Volume</span><span class="stat-row-val" id="s-vol">--</span></div>
-        <div class="stat-row"><span class="stat-row-lbl">P/E Ratio</span><span class="stat-row-val" id="s-pe">--</span></div>
+        <div class="stat-row"><span class="stat-row-lbl">Stock P/E</span><span class="stat-row-val" id="s-pe">--</span></div>
         <div class="stat-row"><span class="stat-row-lbl">EPS (₹)</span><span class="stat-row-val" id="s-eps">--</span></div>
-        <div class="stat-row"><span class="stat-row-lbl">RSI (14)</span><span class="stat-row-val" id="s-rsi">--</span></div>
-        <div class="stat-row"><span class="stat-row-lbl">Beta</span><span class="stat-row-val" id="s-beta">--</span></div>
-        <div class="stat-row"><span class="stat-row-lbl">Div. Yield</span><span class="stat-row-val" id="s-div">--</span></div>
         <div class="stat-row"><span class="stat-row-lbl">Book Value</span><span class="stat-row-val" id="s-bv">--</span></div>
+        <div class="stat-row"><span class="stat-row-lbl">Face Value</span><span class="stat-row-val" id="s-faceval">--</span></div>
+        <div class="stat-row"><span class="stat-row-lbl">Div. Yield</span><span class="stat-row-val" id="s-div">--</span></div>
+        <div class="stat-row"><span class="stat-row-lbl">Beta</span><span class="stat-row-val" id="s-beta">--</span></div>
+        <div class="stat-row"><span class="stat-row-lbl">ROCE</span><span class="stat-row-val" id="s-roce">--</span></div>
+        <div class="stat-row"><span class="stat-row-lbl">ROE</span><span class="stat-row-val" id="s-roe">--</span></div>
+        <div class="stat-row"><span class="stat-row-lbl">Debt/Equity</span><span class="stat-row-val" id="s-de">--</span></div>
+        <div class="stat-row"><span class="stat-row-lbl">Promoter %</span><span class="stat-row-val" id="s-promo">--</span></div>
+      </div>
+
+      <!-- TECHNICALS QUICK -->
+      <div class="stat-group-title">⚡ Technical</div>
+      <div class="stats-grid-2">
+        <div class="stat-row"><span class="stat-row-lbl">RSI (14)</span><span class="stat-row-val" id="s-rsi">--</span></div>
+        <div class="stat-row"><span class="stat-row-lbl">Signal</span><span class="stat-row-val" id="s-signal">--</span></div>
+      </div>
+
+      <div style="padding:10px 16px;font-size:10px;color:var(--text-muted);border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+        <span id="s-source">Source: loading...</span>
+        <span id="s-fetchtime">--</span>
       </div>
     </div>
 

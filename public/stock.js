@@ -1,25 +1,25 @@
 /* ===== STOCK DATA (same as app.js) ===== */
 const STOCKS = [
-  { symbol:"IRFC",      name:"Indian Railway Finance Corp", exchange:"NSE", sector:"PSU Finance",      fallbackPrice:168,  volatility:0.025 },
-  { symbol:"SUZLON",    name:"Suzlon Energy Ltd",           exchange:"NSE", sector:"Renewable Energy", fallbackPrice:56,   volatility:0.040 },
-  { symbol:"YESBANK",   name:"Yes Bank Ltd",                exchange:"NSE", sector:"Banking",          fallbackPrice:24,   volatility:0.045 },
+  { symbol:"IRFC",      name:"Indian Railway Finance Corp", exchange:"NSE", sector:"PSU Finance",      fallbackPrice:161,  volatility:0.025 },
+  { symbol:"SUZLON",    name:"Suzlon Energy Ltd",           exchange:"NSE", sector:"Renewable Energy", fallbackPrice:55,   volatility:0.040 },
+  { symbol:"YESBANK",   name:"Yes Bank Ltd",                exchange:"NSE", sector:"Banking",          fallbackPrice:19,   volatility:0.045 },
   { symbol:"NHPC",      name:"NHPC Ltd",                    exchange:"NSE", sector:"Hydro Power",      fallbackPrice:82,   volatility:0.025 },
-  { symbol:"RVNL",      name:"Rail Vikas Nigam Ltd",        exchange:"NSE", sector:"Infrastructure",   fallbackPrice:412,  volatility:0.030 },
-  { symbol:"IREDA",     name:"IREDA",                       exchange:"NSE", sector:"Green Finance",    fallbackPrice:185,  volatility:0.035 },
-  { symbol:"GMRINFRA",  name:"GMR Airports Infra",          exchange:"NSE", sector:"Airports",         fallbackPrice:92,   volatility:0.030 },
-  { symbol:"IDEA",      name:"Vodafone Idea Ltd",           exchange:"NSE", sector:"Telecom",          fallbackPrice:14,   volatility:0.055 },
-  { symbol:"RPOWER",    name:"Reliance Power Ltd",          exchange:"BSE", sector:"Power",            fallbackPrice:38,   volatility:0.050 },
-  { symbol:"CANBK",     name:"Canara Bank",                 exchange:"NSE", sector:"PSU Bank",         fallbackPrice:102,  volatility:0.025 },
-  { symbol:"TATAPOWER", name:"Tata Power Company",          exchange:"NSE", sector:"Power",            fallbackPrice:428,  volatility:0.025 },
-  { symbol:"RECLTD",    name:"REC Limited",                 exchange:"NSE", sector:"PSU Finance",      fallbackPrice:488,  volatility:0.030 },
-  { symbol:"SAIL",      name:"Steel Auth. of India",        exchange:"NSE", sector:"Steel",            fallbackPrice:128,  volatility:0.030 },
-  { symbol:"BANKBARODA",name:"Bank of Baroda",              exchange:"NSE", sector:"PSU Bank",         fallbackPrice:224,  volatility:0.025 },
-  { symbol:"TRIDENT",   name:"Trident Ltd",                 exchange:"NSE", sector:"Textiles",         fallbackPrice:38,   volatility:0.035 },
-  { symbol:"HFCL",      name:"HFCL Ltd",                    exchange:"NSE", sector:"Telecom Infra",    fallbackPrice:148,  volatility:0.040 },
-  { symbol:"ZOMATO",    name:"Zomato Ltd",                  exchange:"NSE", sector:"Foodtech",         fallbackPrice:218,  volatility:0.030 },
-  { symbol:"PAYTM",     name:"One97 Communications",        exchange:"NSE", sector:"Fintech",          fallbackPrice:512,  volatility:0.040 },
-  { symbol:"PCJEWELLER",name:"PC Jeweller Ltd",             exchange:"BSE", sector:"Jewellery",        fallbackPrice:78,   volatility:0.045 },
-  { symbol:"IEX",       name:"Indian Energy Exchange",      exchange:"NSE", sector:"Energy Markets",   fallbackPrice:186,  volatility:0.030 },
+  { symbol:"RVNL",      name:"Rail Vikas Nigam Ltd",        exchange:"NSE", sector:"Infrastructure",   fallbackPrice:390,  volatility:0.030 },
+  { symbol:"IREDA",     name:"IREDA",                       exchange:"NSE", sector:"Green Finance",    fallbackPrice:168,  volatility:0.035 },
+  { symbol:"GMRINFRA",  name:"GMR Airports Infra",          exchange:"NSE", sector:"Airports",         fallbackPrice:88,   volatility:0.030 },
+  { symbol:"IDEA",      name:"Vodafone Idea Ltd",           exchange:"NSE", sector:"Telecom",          fallbackPrice:10,   volatility:0.055 },
+  { symbol:"RPOWER",    name:"Reliance Power Ltd",          exchange:"BSE", sector:"Power",            fallbackPrice:36,   volatility:0.050 },
+  { symbol:"CANBK",     name:"Canara Bank",                 exchange:"NSE", sector:"PSU Bank",         fallbackPrice:98,  volatility:0.025 },
+  { symbol:"TATAPOWER", name:"Tata Power Company",          exchange:"NSE", sector:"Power",            fallbackPrice:395,  volatility:0.025 },
+  { symbol:"RECLTD",    name:"REC Limited",                 exchange:"NSE", sector:"PSU Finance",      fallbackPrice:465,  volatility:0.030 },
+  { symbol:"SAIL",      name:"Steel Auth. of India",        exchange:"NSE", sector:"Steel",            fallbackPrice:118,  volatility:0.030 },
+  { symbol:"BANKBARODA",name:"Bank of Baroda",              exchange:"NSE", sector:"PSU Bank",         fallbackPrice:218,  volatility:0.025 },
+  { symbol:"TRIDENT",   name:"Trident Ltd",                 exchange:"NSE", sector:"Textiles",         fallbackPrice:35,   volatility:0.035 },
+  { symbol:"HFCL",      name:"HFCL Ltd",                    exchange:"NSE", sector:"Telecom Infra",    fallbackPrice:138,  volatility:0.040 },
+  { symbol:"ZOMATO",    name:"Zomato Ltd",                  exchange:"NSE", sector:"Foodtech",         fallbackPrice:220,  volatility:0.030 },
+  { symbol:"PAYTM",     name:"One97 Communications",        exchange:"NSE", sector:"Fintech",          fallbackPrice:490,  volatility:0.040 },
+  { symbol:"PCJEWELLER",name:"PC Jeweller Ltd",             exchange:"BSE", sector:"Jewellery",        fallbackPrice:72,   volatility:0.045 },
+  { symbol:"IEX",       name:"Indian Energy Exchange",      exchange:"NSE", sector:"Energy Markets",   fallbackPrice:182,  volatility:0.030 },
 ];
 
 const fmtPrice = v => "₹" + (v||0).toFixed(2);
@@ -81,6 +81,10 @@ async function init() {
 }
 
 async function fetchRealPrice(symbol) {
+  // Show loading state
+  const badge = document.getElementById("h-live-tag");
+  if(badge) { badge.textContent="FETCHING..."; badge.className="real-tag"; badge.style.background="#fef9e7"; badge.style.color="#92400e"; }
+
   try {
     const res = await fetch("/api/price?symbols=" + symbol);
     const data = await res.json();
@@ -103,15 +107,45 @@ async function fetchRealPrice(symbol) {
       st.prevClose = p.prevClose || st.price;
       st.rsi       = Math.min(85, Math.max(15, 50 + st.chgPct * 3 + (Math.random()-0.5)*5));
       st.realPrice = true;
-      const tag = document.getElementById("h-live-tag");
-      if(tag) { tag.textContent="LIVE"; tag.className="real-tag"; }
+      st.source    = p.source || "live";
+      st.fetchedAt = data.fetchedAt;
+
+      if(badge) { badge.textContent="✓ LIVE"; badge.style.background="#e6f9f4"; badge.style.color="#008f6b"; }
       renderHeader();
       renderStats();
       renderTechnicals();
       drawChart("1D");
       calcReturns();
+
+      // Also fetch fundamentals
+      fetchFundamentals(symbol);
+    } else {
+      if(badge) { badge.textContent="SIMULATED"; badge.style.background="#fef9e7"; badge.style.color="#92400e"; }
+      showToast("Using simulated price — live data unavailable", "info");
     }
-  } catch(e) { console.warn("Price fetch failed:", e.message); }
+  } catch(e) {
+    console.warn("Price fetch failed:", e.message);
+    if(badge) { badge.textContent="SIMULATED"; badge.style.background="#fef9e7"; badge.style.color="#92400e"; }
+  }
+
+  // Refresh price every 60s
+  setTimeout(() => fetchRealPrice(symbol), 60000);
+}
+
+async function fetchFundamentals(symbol) {
+  try {
+    const res = await fetch("/api/fundamentals?symbol=" + symbol);
+    const data = await res.json();
+    if (data && !data.error) {
+      st.roce = data.roce;
+      st.roe  = data.roe;
+      st.faceVal = data.faceVal;
+      st.debtToEq = data.debtToEq;
+      st.currentRatio = data.currentRatio;
+      st.promoterHolding = data.promoterHolding;
+      renderStats(); // re-render with extra data
+    }
+  } catch(e) { console.warn("Fundamentals fetch failed:", e.message); }
 }
 
 function getSignal(chgPct, rsi) {
